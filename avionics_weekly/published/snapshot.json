@@ -1,0 +1,78 @@
+{
+ "share_token": "ZWj6Xcvqz1lZpHVy",
+ "exported": "2026-10-20T16:00:46",
+ "reports": [
+  {
+   "week": "2026-W42",
+   "item_ids": "[1, 3, 2]",
+   "body": "# 1. 개요\r\n기간: 2026.10.12. ~ 2026.10.18. / 수록: 3건 (공개 자료 기준)\r\n분야: 데이터링크·통신, 무장 연동, 임무컴퓨터·소프트웨어(OFP)\r\n\r\n# 2. 주요 기술동향\r\n## 1) [데이터링크·통신/임무컴퓨터·소프트웨어(OFP)] F-22 조종사, 비행 중 전술데이터링크로 YFQ-44A CCA 지휘 첫 시연\r\n○ 대상: F-22, YFQ-44A Fury(CCA) / 유형: 기능 추가 / 성숙도: 시험 중\r\n○ 요약: 미 공군은 F-22 조종사가 비행 중 Anduril YFQ-44A Fury 1대를 지휘하는 시험을 Edwards AFB에서 수행했다고 10.16. 발표(비행은 10월 첫째 주, 수 시간). 두 기체가 이륙·공중 합류 후 F-22가 전술데이터링크로 갱신된 임무계획과 상위 수준 전술 지시를 송신했고, YFQ-44A 탑재 자율 소프트웨어가 이를 실시간 해석해 기동·모의 전투 임무를 수행. 조종사가 직접 조종하지 않는 '지휘(quarterback)' 방식. 412시험비행단, 309소프트웨어엔지니어링그룹, F-22 SPO 등 참여. 공군은 향후 조종사 1명이 CCA 여러 대를 편대로 지휘하는 개념을 추진하며, 2032년까지 CCA 500대 배치, 대당 2,000만 달러 이하(센서·무장 제외) 목표. 앞서 2월 F-22, 5월 F-35(지상)가 대리기 MQ-20으로 같은 개념을 시험.\r\n○ 적용 가능성 [중] KF-21: 유무인 협업(MUM-T) 지휘·통제 능력 확보 필요\r\n   - 도입 고려사항: 국내 무인기·데이터링크 체계와의 연동 표준, 자율 SW 신뢰성 검증, 조종사 작업부하. 미국 CCA 체계 직접 도입은 수출통제 제약 가능성(추정) → 국내개발 연계 검토\r\n○ 적용 가능성 [하] F-35A: 유무인 협업 능력 부재(일반)\r\n   - 도입 고려사항: F-35 측 연동은 미국 Block 4/소프트웨어 일정에 종속. 독자 통합 경로 제한\r\n○ 출처: Air & Space Forces Magazine, 2026-10-16, https://www.airandspaceforces.com/f-22-pilot-directs-cca-in-flight-as-airborne-qb/\r\n\r\n## 2) [무장 연동/임무컴퓨터·소프트웨어(OFP)] F-35B, SDB II(StormBreaker) 8발 1회 통과 연속투하(ripple) 첫 시험\r\n○ 대상: F-35B / 유형: 기능 추가 / 성숙도: 시험 중\r\n○ 요약: 미 해병대 VMX-1이 9.15. Yuma Proving Ground에서 F-35B로 GBU-53/B SDB II 8발을 한 번의 통과에서 연속 투하(ripple release)한 첫 시험 수행(Raytheon 발표). SDB II는 250lb급, 3중 모드 탐색기로 저시정 이동표적 추적, 사거리 46마일 이상, kill box 제한·자동표적인식 기능. F-35 내부무장창 탑재로 스텔스 유지. 다만 F-35 함대는 SDB II 완전 통합을 위한 소프트웨어 패치를 기다리는 중이며, GAO(7월)는 F-35 초기 SDB II 능력이 2년 지연, 추가 2년 지연 가능성을 지적. 다음 ripple 시험은 이번 분기 텍사스에서 예정. F-15E(2020), F/A-18E/F(2026.2.)는 이미 운용 인가.\r\n○ 적용 가능성 [중] F-35A: 이동표적 정밀타격 무장 다양화 필요\r\n   - 도입 고려사항: F-35A 통합은 미 공군 일정·Block 4 SW에 종속(지연 위험). FMS 획득 비용, 수출 승인 필요\r\n○ 적용 가능성 [중] F-15K: 이동표적 대응 정밀유도무장 보강 필요\r\n   - 도입 고려사항: F-15E 운용 인가 사례로 통합 경로는 있음(추정). 기체별 OFP 개량·인증 비용, 수출통제 검토 필요\r\n○ 출처: Aviation A2Z, 2026-10-17, https://aviationa2z.com/index.php/2026/10/17/f-35b-drops-eight-stormbreaker-bombs-in-rapid-fire-test\r\n\r\n## 3) [임무컴퓨터·소프트웨어(OFP)] F-35 통합핵심처리기(ICP) 시험·사이버보안·수리기반 구축 1,610만 달러 계약\r\n○ 대상: F-35 / 유형: 성능개량 / 성숙도: 양산·배치 중\r\n○ 요약: NAVAIR가 Lockheed Martin에 $16,111,551 확정가 계약수정(P00001, 주문번호 N0001926F2222)을 부여. F-35 ICP(L3Harris 개발)의 항전 시험능력 확장, 사이버보안 개량, 전용 수리 인프라 구축과 관련 공학·사업관리·전력화 준비 업무 포함. ICP는 레이더, DAS, EW, 통신, 유도·제어, 조종석·헬멧 시현 데이터를 처리하는 핵심 컴퓨터. 공군·해군 각 약 805만 달러(FY2026 항공기 조달예산), 작업지 McKinney(TX)·Palm Bay(FL) 각 50%, 2029년 1월 완료 예정. 비경쟁 계약.\r\n○ 적용 가능성 [중] F-35A: 핵심 항전 컴퓨터의 정비·사이버보안 유지 체계 확보 필요\r\n   - 도입 고려사항: 수리 인프라는 미국 내 구축으로 국내 정비 자립과는 별개. 국외 운용국 지원 범위·비용은 공개 정보 없음\r\n○ 출처: Military & Aerospace Electronics, 2026-10-16, https://www.militaryaerospace.com/computers/article/55412322/lockheed-martin-receives-161-million-f-35-processor-support-contract\r\n\r\n# 3. 종합 의견\r\n○ 유무인 협업: F-22–YFQ-44A 시연으로 '조종사가 데이터링크로 상위 지시, 무인기 자율 SW가 실행'하는 지휘 방식이 실기 단계에 진입. 같은 주 X-62 VISTA 임무체계 개량(자율·AI 시험 확대) 소식과 함께, 미 공군은 데이터링크·자율 SW·런타임 보증을 묶어 추진 중\r\n○ F-35 계열: SDB II 운용과 ICP 지원 모두 TR-3/Block 4 소프트웨어 일정에 종속. 우리 F-35A 관련 능력도 미국 일정·FMS 승인에 좌우될 가능성(추정)\r\n○ 후속 조치(안): ① 유무인 협업 데이터링크·지휘 개념을 소요제기 초안으로 검토(첨부) ② SDB II의 F-15K 적용 가능성은 공개 자료 추가 확인 후 판단\r\n※ 본 보고서는 공개 자료만 사용. 우리 기종 관련 내용은 개략 수준이며 '추정' 표시는 출처 미확인 판단임",
+   "status": "확정",
+   "updated": "2026-10-20T16:00:28"
+  }
+ ],
+ "items": [
+  {
+   "id": 1,
+   "week": "2026-W42",
+   "title_orig": "F-22 Pilot Directs CCA in Flight as 'Airborne QB'",
+   "title_ko": "F-22 조종사, 비행 중 전술데이터링크로 YFQ-44A CCA 지휘 첫 시연",
+   "source_name": "Air & Space Forces Magazine",
+   "url": "https://www.airandspaceforces.com/f-22-pilot-directs-cca-in-flight-as-airborne-qb/",
+   "published": "2026-10-16",
+   "fields": "[\"데이터링크·통신\", \"임무컴퓨터·소프트웨어(OFP)\"]",
+   "foreign_aircraft": "F-22, YFQ-44A Fury(CCA)",
+   "type": "기능 추가",
+   "summary": "미 공군은 F-22 조종사가 비행 중 Anduril YFQ-44A Fury 1대를 지휘하는 시험을 Edwards AFB에서 수행했다고 10.16. 발표(비행은 10월 첫째 주, 수 시간). 두 기체가 이륙·공중 합류 후 F-22가 전술데이터링크로 갱신된 임무계획과 상위 수준 전술 지시를 송신했고, YFQ-44A 탑재 자율 소프트웨어가 이를 실시간 해석해 기동·모의 전투 임무를 수행. 조종사가 직접 조종하지 않는 '지휘(quarterback)' 방식. 412시험비행단, 309소프트웨어엔지니어링그룹, F-22 SPO 등 참여. 공군은 향후 조종사 1명이 CCA 여러 대를 편대로 지휘하는 개념을 추진하며, 2032년까지 CCA 500대 배치, 대당 2,000만 달러 이하(센서·무장 제외) 목표. 앞서 2월 F-22, 5월 F-35(지상)가 대리기 MQ-20으로 같은 개념을 시험.",
+   "maturity": "시험 중",
+   "collect_mode": "자동",
+   "status": "보고서 반영",
+   "memo": "",
+   "data_class": "공개",
+   "link_ok": 1,
+   "evals": "[{\"aircraft\": \"KF-21\", \"weakness\": \"유무인 협업(MUM-T) 지휘·통제 능력 확보 필요\", \"considerations\": \"국내 무인기·데이터링크 체계와의 연동 표준, 자율 SW 신뢰성 검증, 조종사 작업부하. 미국 CCA 체계 직접 도입은 수출통제 제약 가능성(추정) → 국내개발 연계 검토\", \"grade\": \"중\"}, {\"aircraft\": \"F-35A\", \"weakness\": \"유무인 협업 능력 부재(일반)\", \"considerations\": \"F-35 측 연동은 미국 Block 4/소프트웨어 일정에 종속. 독자 통합 경로 제한\", \"grade\": \"하\"}]",
+   "created": "2026-10-20T14:10:08"
+  },
+  {
+   "id": 2,
+   "week": "2026-W42",
+   "title_orig": "Lockheed Martin receives $16.1 million F-35 processor support contract",
+   "title_ko": "F-35 통합핵심처리기(ICP) 시험·사이버보안·수리기반 구축 1,610만 달러 계약",
+   "source_name": "Military & Aerospace Electronics",
+   "url": "https://www.militaryaerospace.com/computers/article/55412322/lockheed-martin-receives-161-million-f-35-processor-support-contract",
+   "published": "2026-10-16",
+   "fields": "[\"임무컴퓨터·소프트웨어(OFP)\"]",
+   "foreign_aircraft": "F-35",
+   "type": "성능개량",
+   "summary": "NAVAIR가 Lockheed Martin에 $16,111,551 확정가 계약수정(P00001, 주문번호 N0001926F2222)을 부여. F-35 ICP(L3Harris 개발)의 항전 시험능력 확장, 사이버보안 개량, 전용 수리 인프라 구축과 관련 공학·사업관리·전력화 준비 업무 포함. ICP는 레이더, DAS, EW, 통신, 유도·제어, 조종석·헬멧 시현 데이터를 처리하는 핵심 컴퓨터. 공군·해군 각 약 805만 달러(FY2026 항공기 조달예산), 작업지 McKinney(TX)·Palm Bay(FL) 각 50%, 2029년 1월 완료 예정. 비경쟁 계약.",
+   "maturity": "양산·배치 중",
+   "collect_mode": "자동",
+   "status": "보고서 반영",
+   "memo": "",
+   "data_class": "공개",
+   "link_ok": 1,
+   "evals": "[{\"aircraft\": \"F-35A\", \"weakness\": \"핵심 항전 컴퓨터의 정비·사이버보안 유지 체계 확보 필요\", \"considerations\": \"수리 인프라는 미국 내 구축으로 국내 정비 자립과는 별개. 국외 운용국 지원 범위·비용은 공개 정보 없음\", \"grade\": \"중\"}]",
+   "created": "2026-10-20T14:10:08"
+  },
+  {
+   "id": 3,
+   "week": "2026-W42",
+   "title_orig": "F-35B Drops Eight StormBreaker Bombs in Rapid-Fire Test",
+   "title_ko": "F-35B, SDB II(StormBreaker) 8발 1회 통과 연속투하(ripple) 첫 시험",
+   "source_name": "Aviation A2Z",
+   "url": "https://aviationa2z.com/index.php/2026/10/17/f-35b-drops-eight-stormbreaker-bombs-in-rapid-fire-test",
+   "published": "2026-10-17",
+   "fields": "[\"무장 연동\", \"임무컴퓨터·소프트웨어(OFP)\"]",
+   "foreign_aircraft": "F-35B",
+   "type": "기능 추가",
+   "summary": "미 해병대 VMX-1이 9.15. Yuma Proving Ground에서 F-35B로 GBU-53/B SDB II 8발을 한 번의 통과에서 연속 투하(ripple release)한 첫 시험 수행(Raytheon 발표). SDB II는 250lb급, 3중 모드 탐색기로 저시정 이동표적 추적, 사거리 46마일 이상, kill box 제한·자동표적인식 기능. F-35 내부무장창 탑재로 스텔스 유지. 다만 F-35 함대는 SDB II 완전 통합을 위한 소프트웨어 패치를 기다리는 중이며, GAO(7월)는 F-35 초기 SDB II 능력이 2년 지연, 추가 2년 지연 가능성을 지적. 다음 ripple 시험은 이번 분기 텍사스에서 예정. F-15E(2020), F/A-18E/F(2026.2.)는 이미 운용 인가.",
+   "maturity": "시험 중",
+   "collect_mode": "자동",
+   "status": "보고서 반영",
+   "memo": "",
+   "data_class": "공개",
+   "link_ok": 1,
+   "evals": "[{\"aircraft\": \"F-35A\", \"weakness\": \"이동표적 정밀타격 무장 다양화 필요\", \"considerations\": \"F-35A 통합은 미 공군 일정·Block 4 SW에 종속(지연 위험). FMS 획득 비용, 수출 승인 필요\", \"grade\": \"중\"}, {\"aircraft\": \"F-15K\", \"weakness\": \"이동표적 대응 정밀유도무장 보강 필요\", \"considerations\": \"F-15E 운용 인가 사례로 통합 경로는 있음(추정). 기체별 OFP 개량·인증 비용, 수출통제 검토 필요\", \"grade\": \"중\"}]",
+   "created": "2026-10-20T14:10:09"
+  }
+ ]
+}
