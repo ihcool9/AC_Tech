@@ -6,6 +6,20 @@
   <form method="get" class="inline"><label>기종
     <select name="aircraft" onchange="this.form.submit()">{% for a in acs %}<option {{ 'selected' if a==cur }}>{{ a }}</option>{% endfor %}</select></label></form>
   {% if cur %}
+  {% if public %}
+    <table class="bl">
+      <thead><tr><th>분야</th><th>현재 수준·약점(개략)</th><th>입력 방식</th><th>근거 출처</th></tr></thead>
+      <tbody>
+      {% for f in FIELDS %}{% set b = bm.get((cur, f), {}) %}
+      <tr>
+        <td data-l="분야">{{ f }}</td>
+        <td data-l="현재 수준·약점">{{ b.get('level_text') or '미입력' }}</td>
+        <td data-l="입력 방식">{% if b.get('level_text') %}{{ '공개 자료 추정값' if b.get('input_mode')=='추정' else '작성자 직접 입력' }}{% endif %}</td>
+        <td data-l="근거 출처">{% if b.get('source') %}{% if b.get('source').startswith('http') %}<a href="{{ b.get('source') }}" target="_blank" rel="noopener">{{ b.get('source') }}</a>{% else %}{{ b.get('source') }}{% endif %}{% endif %}</td>
+      </tr>{% endfor %}
+      </tbody>
+    </table>
+  {% else %}
   <form method="post">
     <input type="hidden" name="aircraft" value="{{ cur }}">
     <table class="bl">
@@ -26,24 +40,34 @@
     <button>{{ cur }} 기준 정보 저장</button>
   </form>
   {% endif %}
+  {% endif %}
 </section>
 
 <div class="two">
 <section class="panel">
   <h2>기종 목록</h2>
+  {% if public %}
+    <ul>{% for a in acs %}<li>{{ a }}</li>{% endfor %}</ul>
+  {% else %}
   <form method="post"><input type="hidden" name="action" value="aircraft">
     <textarea name="aircraft_list" rows="8">{{ acs|join('\n') }}</textarea>
     <p class="muted">한 줄에 한 기종. 실제 운용 기종에 맞게 고치세요.</p>
     <button>기종 목록 저장</button></form>
+  {% endif %}
 </section>
 <section class="panel">
   <h2>자동 수집 출처</h2>
+  {% if public %}
+    <p>{{ sources|nl2br }}</p>
+  {% else %}
   <form method="post"><input type="hidden" name="action" value="sources">
     <textarea name="sources" rows="8">{{ sources }}</textarea>
     <button>출처 목록 저장</button></form>
+  {% endif %}
 </section>
 </div>
 
+{% if not public %}
 <section class="panel">
   <h2>설정 상태</h2>
   <ul>
@@ -55,4 +79,5 @@
   <p class="muted">다른 PC·안드로이드 폰에서는 run_share.bat 으로 실행한 뒤 둘째 줄 주소로 접속합니다(같은 네트워크 필요). 이 링크로는 편집 화면에 들어갈 수 없습니다.</p>
   {% if runs %}<h3>최근 수집 기록</h3><ul>{% for r in runs %}<li>{{ r.finished }} · {{ r.week }} · {{ r.mode }} · {{ r.result }} · {{ r.count }}건</li>{% endfor %}</ul>{% endif %}
 </section>
+{% endif %}
 {% endblock %}

@@ -13,10 +13,8 @@
   <nav>
     <a href="{{ url_for('inbox') }}" class="{{ 'on' if request.endpoint in ('inbox','item_detail','item_new') }}">① 주간 소식함</a>
     <a href="{{ url_for('report') }}" class="{{ 'on' if request.endpoint=='report' }}">② 주간 보고서</a>
-    {% if not public %}
     <a href="{{ url_for('draft') }}" class="{{ 'on' if request.endpoint=='draft' }}">③ 소요제기 초안</a>
     <a href="{{ url_for('baseline') }}" class="{{ 'on' if request.endpoint=='baseline' }}">④ 기준 정보</a>
-    {% endif %}
   </nav>
 </header>
 {% endblock %}

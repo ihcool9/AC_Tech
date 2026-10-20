@@ -296,8 +296,8 @@ ITEM_COLS = ["id", "week", "title_orig", "title_ko", "source_name", "url", "publ
 
 
 def export_snapshot():
-    """확정·공유 보고서가 있는 주차의 보고서와 그 주차 소식 전체를 내보낸다.
-    기준 정보·소요제기 초안·작성자 메모는 넣지 않는다."""
+    """확정·공유 보고서가 있는 주차의 보고서·소식 전체·소요제기 초안과, 기종 목록·기준 정보·출처 목록을 내보낸다.
+    작성자 메모는 넣지 않는다."""
     with conn() as c:
         reps = [dict(r) for r in c.execute(
             "SELECT week, item_ids, body, status, updated FROM reports WHERE status IN ('확정','공유')")]
@@ -309,8 +309,14 @@ def export_snapshot():
             d = {k: r[k] for k in ITEM_COLS}
             d["memo"] = ""
             items.append(d)
+        drafts = [dict(r) for r in c.execute(
+            f"SELECT week, item_id, template_version, sections, updated FROM drafts WHERE week IN ({','.join('?' * len(weeks))})",
+            weeks)] if weeks else []
+        baseline = [dict(r) for r in c.execute(
+            "SELECT aircraft, field, level_text, input_mode, source FROM baseline WHERE TRIM(COALESCE(level_text,'')) != ''")]
     return {"share_token": get_setting("share_token"), "exported": datetime.now().isoformat(timespec="seconds"),
-            "reports": reps, "items": items}
+            "reports": reps, "items": items, "drafts": drafts, "baseline": baseline,
+            "aircraft": aircraft_list(), "sources": get_setting("sources")}
 
 
 def load_snapshot():
@@ -326,6 +332,15 @@ def load_snapshot():
         for r in snap.get("reports", []):
             c.execute("INSERT INTO reports(week, item_ids, body, status, updated) VALUES(?,?,?,?,?)",
                       (r["week"], r["item_ids"], r["body"], r["status"], r["updated"]))
+        for r in snap.get("drafts", []):
+            c.execute("INSERT INTO drafts(week, item_id, template_version, sections, updated) VALUES(?,?,?,?,?)",
+                      (r["week"], r["item_id"], r["template_version"], r["sections"], r["updated"]))
+    for b in snap.get("baseline", []):
+        save_baseline(b["aircraft"], b["field"], b["level_text"], b["input_mode"], b["source"])
+    if snap.get("aircraft"):
+        set_aircraft_list(snap["aircraft"])
+    if snap.get("sources"):
+        set_setting("sources", snap["sources"])
     if snap.get("share_token"):
         set_setting("share_token", snap["share_token"])
     set_setting("snapshot_loaded", snap.get("exported", "1"))

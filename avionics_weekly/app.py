@@ -24,7 +24,7 @@ app = Flask(__name__)
 app.secret_key = "avionics-weekly-local"
 store.init()
 
-PUBLIC_ENDPOINTS = {"inbox", "item_detail", "report", "report_hwpx"}
+PUBLIC_ENDPOINTS = {"inbox", "item_detail", "report", "report_hwpx", "draft", "draft_hwpx", "baseline"}
 COLLECT_LOCK = threading.Lock()
 COLLECT_STATE = {"running": False, "message": ""}
 
@@ -346,7 +346,7 @@ def _report_file(week, rep):
 # ── 화면 3: 소요제기 초안 ────────────────────────────────
 @app.route("/draft", methods=["GET", "POST"])
 def draft():
-    week = request.values.get("week") or store.last_week_key()
+    week = request.values.get("week") or default_week()
     d = store.get_draft(week)
     if request.method == "POST":
         act = request.form.get("action")

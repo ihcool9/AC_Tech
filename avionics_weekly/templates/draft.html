@@ -7,6 +7,20 @@
     </select></label></form>
 </section>
 
+{% if public %}
+{% if d %}
+<article class="panel">
+  <h2>소요제기 초안 <small class="muted">양식: {{ d.template_version }}</small></h2>
+  {% if item %}<p class="meta">근거 소식: <a href="{{ url_for('item_detail', iid=item.id) }}">{{ item.title_ko or item.title_orig }}</a> · <a href="{{ item.url }}" target="_blank" rel="noopener">출처</a></p>{% endif %}
+  <p><a class="btn" href="{{ url_for('draft_hwpx', week=week) }}">⬇ hwpx 다운로드</a></p>
+  {% for s in sections %}
+    <h3>{{ loop.index }}. {{ s }}</h3>
+    <p>{{ d.sections.get(s, '')|nl2br }}</p>
+  {% endfor %}
+  <p class="muted">'[작성 필요]' 표시는 자료에 없어 작성자가 채워야 하는 부분입니다.</p>
+</article>
+{% else %}<div class="empty">이 주차 소요제기 초안이 없습니다.</div>{% endif %}
+{% else %}
 <section class="panel">
   <h2>소식 1건 선택 → 초안 만들기</h2>
   {% if candidates %}
@@ -34,5 +48,6 @@
   <div class="actions"><button name="action" value="save">저장</button>
     <a class="btn" href="{{ url_for('draft_hwpx', week=week) }}">⬇ hwpx 다운로드</a></div>
 </form>
+{% endif %}
 {% endif %}
 {% endblock %}
