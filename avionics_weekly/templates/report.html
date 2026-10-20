@@ -9,8 +9,22 @@
 </section>
 
 {% if not rep %}
-<div class="empty">이 주차 보고서가 없습니다.<br>① 주간 소식함에서 소식 2~3건을 체크하고 '주간 보고서 만들기'를 누르세요.<br>
+<div class="empty">이 주차 보고서가 없습니다.<br>
+{% if not public %}① 주간 소식함에서 소식 2~3건을 체크하고 '주간 보고서 만들기'를 누르세요.<br>{% endif %}
 <a class="btn" href="{{ url_for('inbox', week=week) }}">주간 소식함으로</a></div>
+{% elif public %}
+<div class="two">
+  <article class="panel">
+    <h2>국외 전투기 항공전자 주간 기술동향</h2>
+    <p class="muted">{{ week_label(week) }} · {{ rep.status }}</p>
+    <div class="preview">{{ rep.body|render_body }}</div>
+  </article>
+  <aside class="panel">
+    <p><a class="btn" href="{{ url_for('report_hwpx', week=week) }}">⬇ hwpx 다운로드</a></p>
+    <h3>수록 소식</h3>
+    <ul>{% for i in items %}<li><a href="{{ url_for('item_detail', iid=i.id) }}">{{ i.title_ko or i.title_orig }}</a> · <a href="{{ i.url }}" target="_blank" rel="noopener">출처</a></li>{% endfor %}</ul>
+  </aside>
+</div>
 {% else %}
 <div class="two">
   <form method="post" class="panel">

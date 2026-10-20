@@ -14,6 +14,7 @@
       </select>
     </label>
   </form>
+  {% if not public %}
   <div class="actions">
     <form method="post" action="{{ url_for('collect_now') }}" class="inline">
       <input type="hidden" name="week" value="{{ week }}">
@@ -25,21 +26,28 @@
     </form>
     <a class="btn ghost" href="{{ url_for('item_new', week=week) }}">＋ 직접 추가</a>
   </div>
+  {% endif %}
 </section>
+{% if not public %}
 {% if not has_key %}<p class="note">자동 수집은 Claude 앱 예약 작업이 매주 월요일 06:45에 합니다(PC·Claude 앱이 켜져 있어야 함).
   필요할 때는 '이 주차 수집 요청' 후 Claude 앱 → 예약 작업 → '항공전자 주간 수집'의 <b>지금 실행</b>을 누르세요.</p>{% endif %}
 {% if pending %}<p class="note">⏳ 수집 대기 중인 주차: {{ pending|join(', ') }}</p>{% endif %}
+{% endif %}
 
-<form method="post" action="{{ url_for('select_for_report') }}">
+<form method="post" action="{{ url_for('select_for_report') if not public else '' }}">
 <input type="hidden" name="week" value="{{ week }}">
 {% if items %}
-<p class="muted">{{ items|length }}건 · 보고서에 넣을 소식을 체크하세요(권장 2~3건).</p>
+<p class="muted">{{ items|length }}건{% if not public %} · 보고서에 넣을 소식을 체크하세요(권장 2~3건).{% elif selected %} · ★ 표시는 주간 보고서 수록 소식{% endif %}</p>
 <div class="cards">
 {% for i in items %}
   <article class="card">
     <div class="card-head">
+      {% if public %}
+      {% if i.id in selected %}<span class="status s-보고서 반영">★ 보고서 수록</span>{% endif %}
+      {% else %}
       <label class="pick"><input type="checkbox" name="pick" value="{{ i.id }}" {{ 'checked' if i.id in selected }}> 보고서</label>
       <span class="status s-{{ i.status }}">{{ i.status }}</span>
+      {% endif %}
     </div>
     <div class="tags">{% for f in i.fields %}<span class="tag">{{ f }}</span>{% endfor %}
       <span class="tag t2">{{ i.type }}</span><span class="tag t3">{{ i.maturity }}</span>
@@ -53,14 +61,15 @@
   </article>
 {% endfor %}
 </div>
-<div class="sticky"><button>선택한 소식으로 주간 보고서 만들기 →</button></div>
+{% if not public %}<div class="sticky"><button>선택한 소식으로 주간 보고서 만들기 →</button></div>{% endif %}
 {% else %}
 <div class="empty">이 주차에 저장된 소식이 없습니다.<br>
-  {% if has_key %}'이 주차 자동 수집'을 누르거나 월요일 06:45 자동 수집을 기다리세요.{% else %}'이 주차 수집 요청' 또는 '직접 추가'로 소식을 넣으세요.{% endif %}</div>
+  {% if public %}웹에는 확정된 주간 보고서가 있는 주차만 올라옵니다.
+  {% elif has_key %}'이 주차 자동 수집'을 누르거나 월요일 06:45 자동 수집을 기다리세요.{% else %}'이 주차 수집 요청' 또는 '직접 추가'로 소식을 넣으세요.{% endif %}</div>
 {% endif %}
 </form>
 
-{% if runs %}<details class="runs"><summary>최근 수집 기록</summary><ul>
+{% if runs and not public %}<details class="runs"><summary>최근 수집 기록</summary><ul>
 {% for r in runs %}<li>{{ r.finished }} · {{ r.week }} · {{ r.mode }} · {{ r.result }} · {{ r.count }}건</li>{% endfor %}
 </ul></details>{% endif %}
 {% endblock %}

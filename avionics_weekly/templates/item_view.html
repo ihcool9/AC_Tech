@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block body %}
+<p><a href="{{ url_for('inbox', week=item.week) }}">← 주간 소식함 ({{ item.week }})</a></p>
+<article class="panel">
+  <div class="tags">{% for f in item.fields %}<span class="tag">{{ f }}</span>{% endfor %}
+    <span class="tag t2">{{ item.type }}</span><span class="tag t3">{{ item.maturity }}</span></div>
+  <h2>{{ item.title_ko or item.title_orig }}</h2>
+  {% if item.title_ko and item.title_orig %}<p class="muted">{{ item.title_orig }}</p>{% endif %}
+  <p class="meta">{{ item.foreign_aircraft }} · {{ item.source_name }} · {{ item.published }}</p>
+  <p class="src">{% if item.link_ok == 1 %}✅{% endif %} <a href="{{ item.url }}" target="_blank" rel="noopener">출처 열기</a></p>
+  <h3>요약</h3>
+  <p>{{ item.summary|nl2br }}</p>
+  {% if item.evals %}
+  <h3>우리 공군 기종별 적용 가능성</h3>
+  <p class="muted">상: 약점 직접 보완·양산 중·통합 경로 분명 / 중: 시험 단계 또는 통합·수출통제 이슈 / 하: 개념·초기 또는 부적합</p>
+  <ul class="evals">{% for e in item.evals %}
+    <li><b class="g g-{{ e.grade }}">{{ e.grade }}</b> {{ e.aircraft }} — {{ e.weakness }}
+      {% if e.considerations %}<br><span class="muted">도입 고려사항: {{ e.considerations }}</span>{% endif %}</li>
+  {% endfor %}</ul>
+  {% endif %}
+  <p class="muted">자료 구분: 공개</p>
+</article>
+{% endblock %}

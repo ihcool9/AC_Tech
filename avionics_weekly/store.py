@@ -296,18 +296,19 @@ ITEM_COLS = ["id", "week", "title_orig", "title_ko", "source_name", "url", "publ
 
 
 def export_snapshot():
-    """확정·공유 보고서와 거기 들어간 소식만 내보낸다. 기준 정보·초안·작성자 메모는 넣지 않는다."""
+    """확정·공유 보고서가 있는 주차의 보고서와 그 주차 소식 전체를 내보낸다.
+    기준 정보·소요제기 초안·작성자 메모는 넣지 않는다."""
     with conn() as c:
         reps = [dict(r) for r in c.execute(
             "SELECT week, item_ids, body, status, updated FROM reports WHERE status IN ('확정','공유')")]
-        ids = sorted({i for r in reps for i in json.loads(r["item_ids"] or "[]")})
+        weeks = [r["week"] for r in reps]
+        rows = c.execute(f"SELECT * FROM items WHERE week IN ({','.join('?' * len(weeks))}) ORDER BY id",
+                         weeks).fetchall() if weeks else []
         items = []
-        for iid in ids:
-            r = c.execute("SELECT * FROM items WHERE id=?", (iid,)).fetchone()
-            if r:
-                d = {k: r[k] for k in ITEM_COLS}
-                d["memo"] = ""
-                items.append(d)
+        for r in rows:
+            d = {k: r[k] for k in ITEM_COLS}
+            d["memo"] = ""
+            items.append(d)
     return {"share_token": get_setting("share_token"), "exported": datetime.now().isoformat(timespec="seconds"),
             "reports": reps, "items": items}
 

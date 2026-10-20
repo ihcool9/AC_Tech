@@ -13,16 +13,18 @@
   <nav>
     <a href="{{ url_for('inbox') }}" class="{{ 'on' if request.endpoint in ('inbox','item_detail','item_new') }}">① 주간 소식함</a>
     <a href="{{ url_for('report') }}" class="{{ 'on' if request.endpoint=='report' }}">② 주간 보고서</a>
+    {% if not public %}
     <a href="{{ url_for('draft') }}" class="{{ 'on' if request.endpoint=='draft' }}">③ 소요제기 초안</a>
     <a href="{{ url_for('baseline') }}" class="{{ 'on' if request.endpoint=='baseline' }}">④ 기준 정보</a>
+    {% endif %}
   </nav>
 </header>
 {% endblock %}
 <main>
   {% with msgs = get_flashed_messages() %}{% for m in msgs %}<div class="flash">{{ m }}</div>{% endfor %}{% endwith %}
-  {% if collect_state.running %}<div class="flash busy">⏳ {{ collect_state.message }}</div>{% endif %}
+  {% if collect_state.running and not public %}<div class="flash busy">⏳ {{ collect_state.message }}</div>{% endif %}
   {% block body %}{% endblock %}
 </main>
-<footer>공개 자료(오픈소스) 기준 · 우리 기종 정보는 개략 수준만 기재</footer>
+<footer>{% if public %}열람 전용 · {% endif %}공개 자료(오픈소스) 기준 · 우리 기종 정보는 개략 수준만 기재</footer>
 </body>
 </html>

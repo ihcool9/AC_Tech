@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """웹 배포본(Vercel)에 올릴 내용을 만든다.
 
-  python publish.py   → published/snapshot.json 갱신 (확정·공유 보고서와 그 소식만)
+  python publish.py   → published/snapshot.json 갱신 (확정·공유 보고서가 있는 주차의 보고서와 소식)
 
 그다음 GitHub 에 커밋·푸시하면 Vercel 이 다시 배포한다.
 기준 정보(우리 기종 수준), 소요제기 초안, 작성자 메모, 미확정 보고서는 올라가지 않는다.

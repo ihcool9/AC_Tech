@@ -24,6 +24,7 @@ app = Flask(__name__)
 app.secret_key = "avionics-weekly-local"
 store.init()
 
+PUBLIC_ENDPOINTS = {"inbox", "item_detail", "report", "report_hwpx"}
 COLLECT_LOCK = threading.Lock()
 COLLECT_STATE = {"running": False, "message": ""}
 
@@ -38,9 +39,9 @@ def guard():
     p = request.path
     if p.startswith("/static/") or p.startswith("/view/"):
         return None
-    if store.PUBLIC:                 # 웹 배포본: 편집 화면 없음, 첫 화면은 보고서 목록
-        if p == "/":
-            return redirect(url_for("view_list", token=store.get_setting("share_token")))
+    if store.PUBLIC:                 # 웹 배포본: 소식함·소식 상세·보고서를 읽기만 함
+        if request.method == "GET" and request.endpoint in PUBLIC_ENDPOINTS:
+            return None
         abort(404)
     if not is_local():
         abort(403)
@@ -50,7 +51,7 @@ def guard():
 def inject():
     return {"FIELDS": store.FIELDS, "TYPES": store.TYPES, "MATURITY": store.MATURITY,
             "GRADES": store.GRADES, "STATUSES": store.STATUSES, "has_key": ai.has_key(),
-            "collect_state": COLLECT_STATE}
+            "collect_state": COLLECT_STATE, "public": store.PUBLIC}
 
 
 @app.template_filter("nl2br")
@@ -84,8 +85,17 @@ app.jinja_env.globals["week_label"] = week_label
 
 
 def week_choices(cur):
+    if store.PUBLIC:                 # 웹: 올린 주차만
+        return sorted(set(store.weeks_with_data()) | {cur}, reverse=True)
     ws = set(store.weeks_with_data()) | {store.last_week_key(), store.this_week_key(), cur}
     return sorted(ws, reverse=True)
+
+
+def default_week():
+    if store.PUBLIC:
+        ws = store.weeks_with_data()
+        return ws[0] if ws else store.last_week_key()
+    return store.last_week_key()
 
 
 # ── 자동 수집 ─────────────────────────────────────────────
@@ -144,7 +154,7 @@ def scheduler_loop():
 # ── 화면 1: 주간 소식함 ──────────────────────────────────
 @app.route("/")
 def inbox():
-    week = request.args.get("week") or store.last_week_key()
+    week = request.args.get("week") or default_week()
     field = request.args.get("field") or ""
     items = store.items_for_week(week, field or None)
     report = store.get_report(week)
@@ -197,6 +207,8 @@ def item_detail(iid):
         store.save_item(d, iid)
         flash("저장했습니다.")
         return redirect(url_for("item_detail", iid=iid))
+    if store.PUBLIC:
+        return render_template("item_view.html", item=item)
     return render_template("item.html", item=item, aircraft=store.aircraft_list(), new=False)
 
 
@@ -279,7 +291,7 @@ def compose_report(week, items):
 
 @app.route("/report", methods=["GET", "POST"])
 def report():
-    week = request.values.get("week") or store.last_week_key()
+    week = request.values.get("week") or default_week()
     rep = store.get_report(week)
     if request.method == "POST":
         if not rep:
