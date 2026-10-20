@@ -7,7 +7,12 @@ import sqlite3
 from datetime import date, datetime, timedelta
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.environ.get("AVIONICS_DB") or os.path.join(BASE, "data", "avionics.db")
+# Vercel 등 웹 배포본: 파일시스템이 읽기 전용(/tmp 만 쓰기 가능)이고 편집 기능 없이 열람만 한다.
+# 내용은 작성자 PC 에서 publish.py 로 만든 published/snapshot.json 을 시작할 때 읽어 온다.
+PUBLIC = bool(os.environ.get("VERCEL") or os.environ.get("AVIONICS_PUBLIC"))
+DB_PATH = os.environ.get("AVIONICS_DB") or (
+    "/tmp/avionics.db" if PUBLIC else os.path.join(BASE, "data", "avionics.db"))
+SNAPSHOT_PATH = os.path.join(BASE, "published", "snapshot.json")
 
 FIELDS = ["레이더", "전자전(EW)", "센서융합·IRST·EO", "데이터링크·통신", "조종석·HMD",
           "임무컴퓨터·소프트웨어(OFP)", "항법·생존성", "무장 연동"]
@@ -84,6 +89,8 @@ def init():
         if not c.execute("SELECT 1 FROM aircraft").fetchone():
             for i, n in enumerate(DEFAULT_AIRCRAFT):
                 c.execute("INSERT INTO aircraft(name, sort) VALUES(?,?)", (n, i))
+    if PUBLIC:
+        load_snapshot()
     if not get_setting("share_token"):
         set_setting("share_token", secrets.token_urlsafe(12))
     if not get_setting("sources"):
@@ -280,6 +287,47 @@ def log_run(week, mode, started, result, count):
 def last_runs(n=5):
     with conn() as c:
         return [dict(r) for r in c.execute("SELECT * FROM runs ORDER BY id DESC LIMIT ?", (n,))]
+
+
+# ── 웹 배포용 스냅샷(확정·공유 보고서와 그 소식만) ─────────────
+ITEM_COLS = ["id", "week", "title_orig", "title_ko", "source_name", "url", "published", "fields",
+             "foreign_aircraft", "type", "summary", "maturity", "collect_mode", "status", "memo",
+             "data_class", "link_ok", "evals", "created"]
+
+
+def export_snapshot():
+    """확정·공유 보고서와 거기 들어간 소식만 내보낸다. 기준 정보·초안·작성자 메모는 넣지 않는다."""
+    with conn() as c:
+        reps = [dict(r) for r in c.execute(
+            "SELECT week, item_ids, body, status, updated FROM reports WHERE status IN ('확정','공유')")]
+        ids = sorted({i for r in reps for i in json.loads(r["item_ids"] or "[]")})
+        items = []
+        for iid in ids:
+            r = c.execute("SELECT * FROM items WHERE id=?", (iid,)).fetchone()
+            if r:
+                d = {k: r[k] for k in ITEM_COLS}
+                d["memo"] = ""
+                items.append(d)
+    return {"share_token": get_setting("share_token"), "exported": datetime.now().isoformat(timespec="seconds"),
+            "reports": reps, "items": items}
+
+
+def load_snapshot():
+    """웹 배포본 시작 시: 스냅샷을 빈 /tmp DB 에 넣는다(이미 넣었으면 건너뜀)."""
+    if not os.path.exists(SNAPSHOT_PATH) or get_setting("snapshot_loaded"):
+        return
+    with open(SNAPSHOT_PATH, encoding="utf-8") as f:
+        snap = json.load(f)
+    with conn() as c:
+        for d in snap.get("items", []):
+            c.execute(f"INSERT OR REPLACE INTO items({', '.join(ITEM_COLS)}) VALUES({', '.join('?' * len(ITEM_COLS))})",
+                      [d.get(k) for k in ITEM_COLS])
+        for r in snap.get("reports", []):
+            c.execute("INSERT INTO reports(week, item_ids, body, status, updated) VALUES(?,?,?,?,?)",
+                      (r["week"], r["item_ids"], r["body"], r["status"], r["updated"]))
+    if snap.get("share_token"):
+        set_setting("share_token", snap["share_token"])
+    set_setting("snapshot_loaded", snap.get("exported", "1"))
 
 
 # ── 수집 요청(API 키 없이 Claude 앱 예약 작업이 처리) ──────────

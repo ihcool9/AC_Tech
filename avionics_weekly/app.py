@@ -38,6 +38,10 @@ def guard():
     p = request.path
     if p.startswith("/static/") or p.startswith("/view/"):
         return None
+    if store.PUBLIC:                 # 웹 배포본: 편집 화면 없음, 첫 화면은 보고서 목록
+        if p == "/":
+            return redirect(url_for("view_list", token=store.get_setting("share_token")))
+        abort(404)
     if not is_local():
         abort(403)
 
