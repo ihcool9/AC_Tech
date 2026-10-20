@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="bar">
+  <form method="get" class="inline"><label>주차
+    <select name="week" onchange="this.form.submit()">
+      {% for w in weeks %}<option value="{{ w }}" {{ 'selected' if w==week }}>{{ week_label(w) }}</option>{% endfor %}
+    </select></label></form>
+  {% if rep %}<span class="status s-{{ rep.status }}">{{ rep.status }}</span>{% endif %}
+</section>
+
+{% if not rep %}
+<div class="empty">이 주차 보고서가 없습니다.<br>① 주간 소식함에서 소식 2~3건을 체크하고 '주간 보고서 만들기'를 누르세요.<br>
+<a class="btn" href="{{ url_for('inbox', week=week) }}">주간 소식함으로</a></div>
+{% else %}
+<div class="two">
+  <form method="post" class="panel">
+    <input type="hidden" name="week" value="{{ week }}">
+    <h2>보고서 편집</h2>
+    <p class="muted">'# ' 는 큰 제목, '## ' 는 소제목입니다. hwpx 에서도 같은 구조로 나옵니다.</p>
+    <textarea name="body" rows="26" class="mono">{{ rep.body }}</textarea>
+    <div class="actions">
+      <button name="status" value="초안" class="ghost">초안 저장</button>
+      <button name="status" value="확정">확정</button>
+      <button name="status" value="공유" class="ok">확정 + 공유</button>
+    </div>
+  </form>
+  <aside class="panel">
+    <h2>내보내기·공유</h2>
+    <p><a class="btn" href="{{ url_for('report_hwpx', week=week) }}">⬇ hwpx 다운로드</a></p>
+    <h3>보기 전용 링크</h3>
+    {% if rep.status in ('확정','공유') %}
+      {% for u in share_urls %}<p class="link"><code>{{ u }}</code></p>{% endfor %}
+      <p class="muted">첫 줄은 이 PC 확인용입니다. 다른 PC·휴대폰은 앱을 <b>run_share.bat</b>(또는 --share)로 실행했을 때 둘째 줄 주소로 접속합니다. 보기 전용이라 편집할 수 없습니다.</p>
+    {% else %}<p class="muted">'확정' 또는 '확정 + 공유' 후에 링크로 열람할 수 있습니다.</p>{% endif %}
+    <h3>수록 소식</h3>
+    <ul>{% for i in items %}<li><a href="{{ url_for('item_detail', iid=i.id) }}">{{ i.title_ko or i.title_orig }}</a> · <a href="{{ i.url }}" target="_blank" rel="noopener">출처</a></li>{% endfor %}</ul>
+    <p><a href="{{ url_for('draft', week=week) }}">③ 이 주차 소요제기 초안 만들기 →</a></p>
+    <h3>미리보기</h3>
+    <div class="preview">{{ rep.body|render_body }}</div>
+  </aside>
+</div>
+{% endif %}
+{% endblock %}

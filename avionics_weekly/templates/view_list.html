@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}항공전자 주간동향 (열람){% endblock %}
+{% block nav %}<header class="top"><div class="brand">국외 전투기 항공전자 주간동향 · 열람</div></header>{% endblock %}
+{% block body %}
+<h2>주간 보고서</h2>
+{% if reports %}
+<ul class="vlist">{% for r in reports %}
+  <li><a href="{{ url_for('view_report', token=token, week=r.week) }}">{{ week_label(r.week) }}</a> <span class="status s-{{ r.status }}">{{ r.status }}</span></li>
+{% endfor %}</ul>
+{% else %}<div class="empty">아직 공유된 보고서가 없습니다.</div>{% endif %}
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block body %}
+<p><a href="{{ url_for('inbox', week=item.week) }}">← 주간 소식함 ({{ item.week }})</a></p>
+
+{% if new %}
+<section class="panel">
+  <h2>AI로 요약·평가해서 추가</h2>
+  <p class="muted">유료 구독 기사나 직접 찾은 자료의 제목·링크·본문을 붙여 넣으면 요약과 기종별 평가를 만들어 줍니다.</p>
+  <form method="post">
+    <input type="hidden" name="mode" value="ai"><input type="hidden" name="week" value="{{ item.week }}">
+    <label>제목<input name="title" required></label>
+    <label>링크<input name="url" type="url" required></label>
+    <label>본문(붙여넣기)<textarea name="body" rows="8" required></textarea></label>
+    <button {{ 'disabled' if not has_key }}>AI 분석 후 추가</button>
+    {% if not has_key %}<span class="muted">API 키가 없어 사용할 수 없습니다. 아래에서 직접 입력하세요.</span>{% endif %}
+  </form>
+</section>
+<h2>직접 입력해서 추가</h2>
+{% else %}
+<h2>소식 상세 · 검토</h2>
+{% endif %}
+
+<form method="post" class="panel" id="itemform">
+  <input type="hidden" name="week" value="{{ item.week }}">
+  <div class="grid2">
+    <label>한글 제목<input name="title_ko" value="{{ item.title_ko }}"></label>
+    <label>원문 제목<input name="title_orig" value="{{ item.title_orig }}"></label>
+    <label>출처(매체·기관)<input name="source_name" value="{{ item.source_name }}"></label>
+    <label>발행일<input name="published" value="{{ item.published }}" placeholder="YYYY-MM-DD"></label>
+    <label class="span2">원문 링크
+      <input name="url" value="{{ item.url }}" {{ 'required' if new }}>
+      {% if item.url %}<a href="{{ item.url }}" target="_blank" rel="noopener">출처 열기</a>
+        {% if item.link_ok == 1 %}✅ 링크 확인됨{% elif item.link_ok == 0 %}⚠️ 링크 확인 실패 — 직접 열어 보세요{% endif %}{% endif %}
+    </label>
+    <label>국외 대상 기종<input name="foreign_aircraft" value="{{ item.foreign_aircraft }}"></label>
+    <label>유형<select name="type">{% for t in TYPES %}<option {{ 'selected' if t==item.type }}>{{ t }}</option>{% endfor %}</select></label>
+    <label>기술 성숙도<select name="maturity">{% for t in MATURITY %}<option {{ 'selected' if t==item.maturity }}>{{ t }}</option>{% endfor %}</select></label>
+    <label>검토 상태<select name="status">{% for t in STATUSES %}<option {{ 'selected' if t==item.status }}>{{ t }}</option>{% endfor %}</select></label>
+  </div>
+  <fieldset><legend>분야</legend>
+    {% for f in FIELDS %}<label class="chk"><input type="checkbox" name="fields" value="{{ f }}" {{ 'checked' if f in item.fields }}> {{ f }}</label>{% endfor %}
+  </fieldset>
+  <label>한글 요약<textarea name="summary" rows="6">{{ item.summary }}</textarea></label>
+
+  <h3>우리 공군 기종별 적용 가능성</h3>
+  <p class="muted">상: 약점 직접 보완·양산 중·통합 경로 분명 / 중: 시험 단계 또는 통합·수출통제 이슈 / 하: 개념·초기 또는 부적합</p>
+  {% set evs = item.evals + [{'aircraft':'','weakness':'','considerations':'','grade':'중'}] %}
+  <input type="hidden" name="eval_count" value="{{ evs|length }}">
+  {% for e in evs %}
+  <div class="evalrow">
+    <select name="eval_aircraft_{{ loop.index0 }}">
+      <option value="">{{ '＋ 기종 추가' if not e.aircraft else '' }}</option>
+      {% for a in aircraft %}<option {{ 'selected' if a==e.aircraft }}>{{ a }}</option>{% endfor %}
+      {% if e.aircraft and e.aircraft not in aircraft %}<option selected>{{ e.aircraft }}</option>{% endif %}
+    </select>
+    <select name="eval_grade_{{ loop.index0 }}">{% for g in GRADES %}<option {{ 'selected' if g==e.grade }}>{{ g }}</option>{% endfor %}</select>
+    <input name="eval_weakness_{{ loop.index0 }}" value="{{ e.weakness }}" placeholder="보완하는 약점(개략)">
+    <input name="eval_cons_{{ loop.index0 }}" value="{{ e.considerations }}" placeholder="도입 고려사항: 비용·체계 통합·수출통제·기술이전·국산화">
+    {% if e.aircraft %}<label class="chk"><input type="checkbox" name="eval_delete_{{ loop.index0 }}"> 삭제</label>{% endif %}
+  </div>
+  {% endfor %}
+
+  <label>작성자 메모<textarea name="memo" rows="2">{{ item.memo }}</textarea></label>
+  <p class="muted">수집: {{ item.collect_mode }} · 자료 구분: 공개</p>
+  <button>{{ '추가' if new else '저장' }}</button>
+</form>
+{% if not new %}
+<form method="post" action="{{ url_for('item_delete', iid=item.id) }}" onsubmit="return confirm('이 소식을 삭제할까요?')">
+  <button class="danger">소식 삭제</button>
+</form>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="bar">
+  <form method="get" class="inline">
+    <label>주차
+      <select name="week" onchange="this.form.submit()">
+        {% for w in weeks %}<option value="{{ w }}" {{ 'selected' if w==week }}>{{ week_label(w) }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>분야
+      <select name="field" onchange="this.form.submit()">
+        <option value="">전체</option>
+        {% for f in FIELDS %}<option {{ 'selected' if f==field }}>{{ f }}</option>{% endfor %}
+      </select>
+    </label>
+  </form>
+  <div class="actions">
+    <form method="post" action="{{ url_for('collect_now') }}" class="inline">
+      <input type="hidden" name="week" value="{{ week }}">
+      {% if has_key %}
+      <button {{ 'disabled' if collect_state.running }}>🔎 이 주차 자동 수집</button>
+      {% else %}
+      <button {{ 'disabled' if week in pending }} title="Claude 앱 예약 작업이 처리합니다">🔎 {{ '수집 요청됨' if week in pending else '이 주차 수집 요청' }}</button>
+      {% endif %}
+    </form>
+    <a class="btn ghost" href="{{ url_for('item_new', week=week) }}">＋ 직접 추가</a>
+  </div>
+</section>
+{% if not has_key %}<p class="note">자동 수집은 Claude 앱 예약 작업이 매주 월요일 06:45에 합니다(PC·Claude 앱이 켜져 있어야 함).
+  필요할 때는 '이 주차 수집 요청' 후 Claude 앱 → 예약 작업 → '항공전자 주간 수집'의 <b>지금 실행</b>을 누르세요.</p>{% endif %}
+{% if pending %}<p class="note">⏳ 수집 대기 중인 주차: {{ pending|join(', ') }}</p>{% endif %}
+
+<form method="post" action="{{ url_for('select_for_report') }}">
+<input type="hidden" name="week" value="{{ week }}">
+{% if items %}
+<p class="muted">{{ items|length }}건 · 보고서에 넣을 소식을 체크하세요(권장 2~3건).</p>
+<div class="cards">
+{% for i in items %}
+  <article class="card">
+    <div class="card-head">
+      <label class="pick"><input type="checkbox" name="pick" value="{{ i.id }}" {{ 'checked' if i.id in selected }}> 보고서</label>
+      <span class="status s-{{ i.status }}">{{ i.status }}</span>
+    </div>
+    <div class="tags">{% for f in i.fields %}<span class="tag">{{ f }}</span>{% endfor %}
+      <span class="tag t2">{{ i.type }}</span><span class="tag t3">{{ i.maturity }}</span>
+      {% if i.collect_mode=='직접' %}<span class="tag t4">직접 추가</span>{% endif %}</div>
+    <h3><a href="{{ url_for('item_detail', iid=i.id) }}">{{ i.title_ko or i.title_orig }}</a></h3>
+    <p class="meta">{{ i.foreign_aircraft }} · {{ i.source_name }} · {{ i.published }}</p>
+    <p class="sum">{{ i.summary|truncate(180) }}</p>
+    {% if i.evals %}<ul class="evals">{% for e in i.evals %}<li><b class="g g-{{ e.grade }}">{{ e.grade }}</b> {{ e.aircraft }} — {{ e.weakness }}</li>{% endfor %}</ul>{% endif %}
+    <p class="src">{% if i.link_ok == 1 %}✅{% elif i.link_ok == 0 %}⚠️ 링크 확인 실패{% endif %}
+      <a href="{{ i.url }}" target="_blank" rel="noopener">출처 열기</a></p>
+  </article>
+{% endfor %}
+</div>
+<div class="sticky"><button>선택한 소식으로 주간 보고서 만들기 →</button></div>
+{% else %}
+<div class="empty">이 주차에 저장된 소식이 없습니다.<br>
+  {% if has_key %}'이 주차 자동 수집'을 누르거나 월요일 06:45 자동 수집을 기다리세요.{% else %}'이 주차 수집 요청' 또는 '직접 추가'로 소식을 넣으세요.{% endif %}</div>
+{% endif %}
+</form>
+
+{% if runs %}<details class="runs"><summary>최근 수집 기록</summary><ul>
+{% for r in runs %}<li>{{ r.finished }} · {{ r.week }} · {{ r.mode }} · {{ r.result }} · {{ r.count }}건</li>{% endfor %}
+</ul></details>{% endif %}
+{% endblock %}

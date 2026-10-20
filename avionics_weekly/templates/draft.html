@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="bar">
+  <form method="get" class="inline"><label>주차
+    <select name="week" onchange="this.form.submit()">
+      {% for w in weeks %}<option value="{{ w }}" {{ 'selected' if w==week }}>{{ week_label(w) }}</option>{% endfor %}
+    </select></label></form>
+</section>
+
+<section class="panel">
+  <h2>소식 1건 선택 → 초안 만들기</h2>
+  {% if candidates %}
+  <form method="post">
+    <input type="hidden" name="week" value="{{ week }}">
+    <select name="item_id">{% for c in candidates %}<option value="{{ c.id }}" {{ 'selected' if item and c.id==item.id }}>[{{ '/'.join(c.fields) }}] {{ c.title_ko or c.title_orig }}</option>{% endfor %}</select>
+    <div class="actions">
+      <button name="action" value="make" class="ghost">기본 초안 (소식 내용으로 채움)</button>
+      <button name="action" value="make_ai" {{ 'disabled' if not has_key }}>AI 초안</button>
+    </div>
+    <p class="muted">이미 만든 초안이 있으면 덮어씁니다. 보고서에 넣은 소식이 먼저 나옵니다.</p>
+  </form>
+  {% else %}<p class="muted">이 주차에 소식이 없습니다.</p>{% endif %}
+</section>
+
+{% if d %}
+<form method="post" class="panel">
+  <input type="hidden" name="week" value="{{ week }}">
+  <h2>소요제기 초안 <small class="muted">양식: {{ d.template_version }}</small></h2>
+  {% if item %}<p class="meta">근거 소식: <a href="{{ url_for('item_detail', iid=item.id) }}">{{ item.title_ko or item.title_orig }}</a> · <a href="{{ item.url }}" target="_blank" rel="noopener">출처</a></p>{% endif %}
+  {% for s in sections %}
+    <label>{{ loop.index }}. {{ s }}<textarea name="sec_{{ loop.index0 }}" rows="5">{{ d.sections.get(s, '') }}</textarea></label>
+  {% endfor %}
+  <p class="muted">'[작성 필요]' 표시는 자료에 없어 작성자가 채워야 하는 부분입니다.</p>
+  <div class="actions"><button name="action" value="save">저장</button>
+    <a class="btn" href="{{ url_for('draft_hwpx', week=week) }}">⬇ hwpx 다운로드</a></div>
+</form>
+{% endif %}
+{% endblock %}

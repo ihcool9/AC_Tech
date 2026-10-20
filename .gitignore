@@ -1,0 +1,16 @@
+# 비밀값: API 키가 들어가는 설정 파일
+avionics_weekly/config.json
+
+# 로컬 데이터(수집 소식·보고서 DB, 수집 임시 파일) — 백업은 별도로
+avionics_weekly/data/
+
+# 생성된 hwpx 결과물
+결과물/
+
+# 파이썬 환경·캐시
+avionics_weekly/.venv/
+__pycache__/
+*.pyc
+
+# 이 PC 전용 도구 설정
+.claude/

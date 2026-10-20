@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}주간 보고서 {{ week }}{% endblock %}
+{% block nav %}<header class="top"><div class="brand">국외 전투기 항공전자 주간동향 · 열람</div>
+<nav><a href="{{ url_for('view_list', token=token) }}">보고서 목록</a></nav></header>{% endblock %}
+{% block body %}
+{% if not rep %}<div class="empty">이 주차 보고서는 아직 공유되지 않았습니다.</div>
+{% else %}
+<article class="panel reader">
+  <h1>국외 전투기 항공전자 주간 기술동향</h1>
+  <p class="meta">{{ week_label(week) }} · {{ rep.status }} · 갱신 {{ rep.updated }}</p>
+  <p><a class="btn" href="{{ url_for('view_report_hwpx', token=token, week=week) }}">⬇ hwpx 다운로드</a></p>
+  {{ rep.body|render_body }}
+  <h2>출처</h2>
+  <ul>{% for i in items %}<li><a href="{{ i.url }}" target="_blank" rel="noopener">{{ i.source_name }} — {{ i.title_orig or i.title_ko }}</a></li>{% endfor %}</ul>
+</article>
+{% endif %}
+{% endblock %}

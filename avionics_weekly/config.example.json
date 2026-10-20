@@ -1,0 +1,10 @@
+{
+  "anthropic_api_key": "",
+  "model": "claude-opus-5-5",
+  "web_search_tool": "web_search_20260209",
+  "max_searches": 12,
+  "port": 5000,
+  "auto_collect": true,
+  "collect_weekday": 0,
+  "collect_time": "06:45"
+}

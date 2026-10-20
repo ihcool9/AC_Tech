@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="panel">
+  <h2>우리 공군 기종별 기준 정보</h2>
+  <p class="note">보안 원칙: 공개 자료 수준의 <b>개략적인 표현</b>만 입력하세요(예: "레이더 성능개량 필요"). 구체적인 운용·취약 정보는 넣지 않습니다.</p>
+  <form method="get" class="inline"><label>기종
+    <select name="aircraft" onchange="this.form.submit()">{% for a in acs %}<option {{ 'selected' if a==cur }}>{{ a }}</option>{% endfor %}</select></label></form>
+  {% if cur %}
+  <form method="post">
+    <input type="hidden" name="aircraft" value="{{ cur }}">
+    <table class="bl">
+      <thead><tr><th>분야</th><th>현재 수준·약점(개략)</th><th>입력 방식</th><th>근거 출처</th></tr></thead>
+      <tbody>
+      {% for f in FIELDS %}{% set b = bm.get((cur, f), {}) %}
+      <tr>
+        <td data-l="분야">{{ f }}</td>
+        <td data-l="현재 수준·약점"><input name="level_{{ loop.index0 }}" value="{{ b.get('level_text','') }}" placeholder="예: 성능개량 필요 / 미입력"></td>
+        <td data-l="입력 방식"><select name="mode_{{ loop.index0 }}">
+          <option value="직접" {{ 'selected' if b.get('input_mode')!='추정' }}>작성자 직접 입력</option>
+          <option value="추정" {{ 'selected' if b.get('input_mode')=='추정' }}>공개 자료 추정값</option></select></td>
+        <td data-l="근거 출처"><input name="source_{{ loop.index0 }}" value="{{ b.get('source','') }}" placeholder="공개 자료 링크"></td>
+      </tr>{% endfor %}
+      </tbody>
+    </table>
+    <p class="muted">현재 수준을 모르면 '공개 자료 추정값'을 고르고 근거 링크를 적으세요. AI 평가 때 '추정'으로 구분해 반영합니다.</p>
+    <button>{{ cur }} 기준 정보 저장</button>
+  </form>
+  {% endif %}
+</section>
+
+<div class="two">
+<section class="panel">
+  <h2>기종 목록</h2>
+  <form method="post"><input type="hidden" name="action" value="aircraft">
+    <textarea name="aircraft_list" rows="8">{{ acs|join('\n') }}</textarea>
+    <p class="muted">한 줄에 한 기종. 실제 운용 기종에 맞게 고치세요.</p>
+    <button>기종 목록 저장</button></form>
+</section>
+<section class="panel">
+  <h2>자동 수집 출처</h2>
+  <form method="post"><input type="hidden" name="action" value="sources">
+    <textarea name="sources" rows="8">{{ sources }}</textarea>
+    <button>출처 목록 저장</button></form>
+</section>
+</div>
+
+<section class="panel">
+  <h2>설정 상태</h2>
+  <ul>
+    <li>API 키: {{ '설정됨 ✅' if has_key else '없음 — 자동 수집·AI 기능 꺼짐 (config.json 참고)' }}</li>
+    <li>모델: <code>{{ cfg.model }}</code> · 자동 수집: {{ '켜짐' if cfg.auto_collect else '꺼짐' }} (매주 {{ ['월','화','수','목','금','토','일'][cfg.collect_weekday|int] }}요일 {{ cfg.collect_time }}, 앱이 켜져 있을 때)</li>
+  </ul>
+  <h3>보기 전용 링크(확정·공유된 보고서 목록)</h3>
+  {% for u in view_urls %}<p class="link"><code>{{ u }}</code></p>{% endfor %}
+  <p class="muted">다른 PC·안드로이드 폰에서는 run_share.bat 으로 실행한 뒤 둘째 줄 주소로 접속합니다(같은 네트워크 필요). 이 링크로는 편집 화면에 들어갈 수 없습니다.</p>
+  {% if runs %}<h3>최근 수집 기록</h3><ul>{% for r in runs %}<li>{{ r.finished }} · {{ r.week }} · {{ r.mode }} · {{ r.result }} · {{ r.count }}건</li>{% endfor %}</ul>{% endif %}
+</section>
+{% endblock %}
